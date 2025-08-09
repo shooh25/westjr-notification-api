@@ -1,3 +1,6 @@
 /Dockerfile
 /docker-compose.yml
 /requirements.txt
+/.devcontainer
+/.vscode
+/.env
