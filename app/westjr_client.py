@@ -1,5 +1,5 @@
 import westjr
-from const import TARGET_DIRECTIONS, TARGET_TYPES, TARGET_LINES
+from app.const import TARGET_DIRECTIONS, TARGET_TYPES, TARGET_LINES
 
 # 遅延が発生している列車情報を取得する
 def get_delay_trains(target_line, target_direction):
@@ -39,7 +39,7 @@ def get_attention_messages(target_line, target_direction):
     if request["status"] == "error":
         return [request["message"]]
     trains = request["data"]
-    if len(trains) >= 3:
+    if len(trains) >= 1:
         messages = []
         for train in trains:
             prev = train['prev']
@@ -56,7 +56,7 @@ def get_attention_messages(target_line, target_direction):
 
 # 呼び出し例
 if __name__ == "__main__":
-    target_line = "nara"
+    target_line = "kyoto"
     target_direction = 0
 
     messages = get_attention_messages(target_line, target_direction)
