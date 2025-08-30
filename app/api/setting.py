@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Header, HTTPException, Depends
 from app.models.models import UserSettingBase, UserSetting
-from sqlalchemy.orm import Session
 from app.models.db import get_db
+from sqlalchemy.orm import Session
+from app.services.notification import schedule_notification
 
 router = APIRouter()
 
@@ -23,7 +24,7 @@ def get_user_status(
 def get_user_setting(
     db: Session = Depends(get_db),
     user_token: str = Header(..., alias="User-Token")
-):
+) -> dict:
     user_id = user_token  
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if not user_data:
@@ -41,7 +42,7 @@ def update_user_setting(
     user_request: UserSettingBase,
     db: Session = Depends(get_db),
     user_token: str = Header(..., alias="User-Token"),
-):
+) -> dict:
     user_id = user_token
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if user_data:
@@ -51,4 +52,21 @@ def update_user_setting(
         user_data = UserSetting(user_id=user_id, line=user_request.line, time=user_request.time)
         db.add(user_data)
     db.commit()
+    
+    schedule_notification(user_id, user_request.line, user_request.time)
     return {"message": "User setting updated successfully", "user_id": user_id}
+
+# 通知設定を削除する
+@router.delete("/setting")
+def delete_user_setting(
+    db: Session = Depends(get_db),
+    user_token: str = Header(..., alias="User-Token")
+) -> dict:
+    user_id = user_token
+    user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User setting not found")
+    
+    db.delete(user_data)
+    db.commit()
+    return {"message": "User setting deleted successfully", "user_id": user_id}

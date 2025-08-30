@@ -1,37 +1,61 @@
-import httpx
 import os
-from fastapi import Request
+import httpx
 from app.services.westjr_client import get_attention_messages
-from app.main import app
-from app.const import LINE_API_REPLY_URL
+from sqlalchemy.orm import Session
+from app.models.db import get_db
+from app.models.models import UserSetting
+from apscheduler.schedulers.background import BackgroundScheduler
+from app.const import LINE_API_PUSH_URL
 
-# Lineからメッセージを受信する際のエンドポイント
-# reply_token : 即座に返信するために必要なトークン
-# @app.post("/notification")
-# async def line_webhook(request: Request):
-#     body = await request.json()
-#     events = body.get("events", [])
-#     print(body)
-#     for event in events:
-#         if event["type"] == "message":
-#             reply_token = event["replyToken"]
-#             user_message = event["message"]["text"].strip()
-#             words = user_message.split()
-#             if len(words) == 2:
-#                 attention_messages = get_attention_messages(words[0], int(words[1]))
-#                 response_text = "\n".join(attention_messages)
-#             else:
-#                 response_text = "正しくありません"
-            
-#             payload = {
-#                 "replyToken": reply_token,
-#                 "messages": [
-#                     {
-#                         "type": "text",
-#                         "text": response_text
-#                     }
-#                 ]
-#             }
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {os.getenv('LINE_CHANNEL_ACCESS_TOKEN')}"
+}
 
-#             async with httpx.AsyncClient() as client:
-#                 await client.post(LINE_API_REPLY_URL, headers=HEADERS, json=payload)
+scheduler = BackgroundScheduler(timezone="Asia/Tokyo")
+
+# 遅延情報を通知する
+def send_notification(user_id: str, line: str):
+    messages = get_attention_messages(line, 1)
+    response_text = "\n".join(messages)
+    print(response_text, flush=True)    
+    payload = {
+        "to": user_id,
+        "messages": [
+            {
+                "type": "text",
+                "text": response_text
+            }
+        ]
+    }
+
+    with httpx.Client() as client:
+        client.post(
+            LINE_API_PUSH_URL,
+            headers=headers,
+            json=payload
+        )
+
+# ユーザーごとに通知スケジュールを設定する
+def schedule_notification(user_id: str, line: str, time: str):
+    hour, minute = map(int, time.split(":"))
+    scheduler.add_job(
+		func=send_notification,
+        trigger="interval",
+		# trigger="cron",
+		# hour=hour,
+		# minute=minute,
+		args=[user_id, line],
+		id=user_id,
+		replace_existing=True,
+        seconds=10
+	)
+    
+# スケジューラーを起動する
+def start_scheduler():
+    db = next(get_db())
+    users = db.query(UserSetting).all()
+    for user in users:
+        schedule_notification(user.user_id, user.line, user.time)
+    scheduler.start()
+

@@ -87,4 +87,4 @@ TARGET_DIRECTIONS: set[int] = {0, 1}
 
 LINE_VERIFY_URL = "https://api.line.me/oauth2/v2.1/verify"
 
-LINE_API_REPLY_URL = "https://api.line.me/v2/bot/message/reply"
+LINE_API_PUSH_URL = "https://api.line.me/v2/bot/message/push"
