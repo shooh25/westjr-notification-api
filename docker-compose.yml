@@ -2,9 +2,9 @@ services:
   web:
     build: . # Dockerfileのあるディレクトリを指定
     ports:
-      - "8000:8000" # ホストの8000をコンテナの8000に割り当て
+      - "8080:8080" # ホストの8080をコンテナの8080に割り当て
     volumes:
       - ./app:/app/app
     environment:
       - PYTHONDONTWRITEBYTECODE=1
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
