@@ -7,6 +7,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN apt-get update && apt-get -y install --no-install-recommends sqlite3
+
 # ホストのファイルをイメージ内の作業ディレクトリにコピー
 COPY ./app ./app
 
