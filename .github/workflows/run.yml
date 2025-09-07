@@ -39,12 +39,9 @@ jobs:
 
       # Cloud Run にデプロイ
       - name: Deploy to Cloud Run
-        env:
-          DB_URL: ${{ secrets.DB_URL }}
         run: |
           gcloud run deploy ${{ secrets.GCP_SERVICE_NAME }} \
             --image="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/westjr-notification-api/${{ secrets.GCP_SERVICE_NAME }}:latest" \
             --region=${{ secrets.GCP_REGION }} \
             --platform=managed \
             --allow-unauthenticated
-            --set-env-vars="DB_URL=${DB_URL}"
