@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Debug envs presence   # ←ここ
+        run: echo "DATABASE_URL is $GCP_PROJECT_ID"
+        
       # リポジトリを取得
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,9 +39,6 @@ jobs:
           IMAGE="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/westjr-notification-api/${{ secrets.GCP_SERVICE_NAME }}:latest"
           docker build -t $IMAGE .
           docker push $IMAGE
-
-      - name: Debug envs presence   # ←ここ
-        run: echo "DATABASE_URL is $GCP_PROJECT_ID"
 
       # Cloud Run にデプロイ
       - name: Deploy to Cloud Run
