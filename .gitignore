@@ -1,7 +1,5 @@
 /.devcontainer
 /.vscode
 /.env
-
-/app/db.sqlite
 docker-compose*.yml
 Dockerfile*
