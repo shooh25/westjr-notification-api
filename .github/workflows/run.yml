@@ -37,10 +37,8 @@ jobs:
           docker build -t $IMAGE .
           docker push $IMAGE
 
-      - name: Debug DATABASE_URL presence   # ←ここ
-        run: echo "DATABASE_URL is $DB_URL"
-        env:
-          DATABASE_URL: ${{ secrets.DB_URL }}
+      - name: Debug envs presence   # ←ここ
+        run: echo "DATABASE_URL is $GCP_PROJECT_ID"
 
       # Cloud Run にデプロイ
       - name: Deploy to Cloud Run
