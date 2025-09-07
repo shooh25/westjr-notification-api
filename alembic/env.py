@@ -2,8 +2,9 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from models.db import Base
-from models.models import UserSetting
+from app.models.db import Base
+from app.models.models import UserSetting
+
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -63,7 +64,7 @@ def run_migrations_online() -> None:
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
-    
+
     url = config.get_main_option("sqlalchemy.url")
 
     with connectable.connect() as connection:
