@@ -10,9 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Debug envs presence   # ←ここ
-        run: echo "DATABASE_URL is ${{ secrets.DB_URL }}"
-
       # リポジトリを取得
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -42,10 +39,12 @@ jobs:
 
       # Cloud Run にデプロイ
       - name: Deploy to Cloud Run
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
         run: |
           gcloud run deploy ${{ secrets.GCP_SERVICE_NAME }} \
             --image="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/westjr-notification-api/${{ secrets.GCP_SERVICE_NAME }}:latest" \
             --region=${{ secrets.GCP_REGION }} \
             --platform=managed \
             --allow-unauthenticated
-            --set-env-vars "DB_URL=${{ secrets.DB_URL }}"
+            --set-env-vars="DB_URL=${DB_URL}"
