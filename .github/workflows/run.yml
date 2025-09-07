@@ -11,8 +11,8 @@ jobs:
 
     steps:
       - name: Debug envs presence   # ←ここ
-        run: echo "DATABASE_URL is $GCP_PROJECT_ID"
-        
+        run: echo "DATABASE_URL is ${{ secrets.GCP_PROJECT_ID }}"
+
       # リポジトリを取得
       - name: Checkout repository
         uses: actions/checkout@v4
