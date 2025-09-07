@@ -1,7 +1,3 @@
 fastapi
 uvicorn[standard]
 WestJR
-sqlalchemy
-httpx
-apscheduler
-alembic
