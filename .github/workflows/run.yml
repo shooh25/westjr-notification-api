@@ -45,4 +45,4 @@ jobs:
             --region=${{ secrets.GCP_REGION }} \
             --platform=managed \
             --allow-unauthenticated
-            --set-env-vars "DB_URL=${{ secrets.DB_URL }}""
+            --set-env-vars "DB_URL=${{ secrets.DB_URL }}"
