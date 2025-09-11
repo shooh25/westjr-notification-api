@@ -39,17 +39,15 @@ def send_notification(user_id: str, line: str):
 # ユーザーごとに通知スケジュールを設定する
 def schedule_notification(user_id: str, line: str, time: str):
     hour, minute = map(int, time.split(":"))
-    scheduler.add_job(
-		func=send_notification,
-        trigger="interval",
-		# trigger="cron",
-		# hour=hour,
-		# minute=minute,
-		args=[user_id, line],
-		id=user_id,
-		replace_existing=True,
-        seconds=10
-	)
+    # scheduler.add_job(
+	# 	func=send_notification,
+	# 	trigger="cron",
+	# 	hour=hour,
+	# 	minute=minute,
+	# 	args=[user_id, line],
+	# 	id=user_id,
+	# 	replace_existing=True,
+	# )
     
 # スケジューラーを起動する
 def start_scheduler():
