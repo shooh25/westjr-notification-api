@@ -23,9 +23,13 @@ def get_user_status(
 @router.get("/setting")
 def get_user_setting(
     db: Session = Depends(get_db),
-    user_token: str = Header(..., alias="User-Token")
+    authorization: str = Header(..., alias="Authorization")
 ) -> dict:
-    user_id = user_token  
+    
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=400, detail="Invalid Authorization header")
+
+    user_id = authorization.split(" ")[1] 
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if not user_data:
         raise HTTPException(status_code=404, detail="User setting not found")
