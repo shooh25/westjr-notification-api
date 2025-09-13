@@ -3,6 +3,7 @@ from app.models.models import UserSettingBase, UserSetting
 from app.models.db import get_db
 from sqlalchemy.orm import Session
 from app.services.notification import schedule_notification
+from app.services.auth import verify_user_token
 
 router = APIRouter()
 
@@ -15,7 +16,9 @@ def get_user_status(
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=400, detail="Invalid Authorization header")
     
-    user_id = authorization.split(" ")[1] 
+    user_token = authorization.split(" ")[1]
+    user_id = verify_user_token(user_token)
+    
     exists = db.query(UserSetting).filter(UserSetting.user_id == user_id).first() is not None
     return {
         "user_id": user_id,
@@ -31,8 +34,10 @@ def get_user_setting(
     
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=400, detail="Invalid Authorization header")
-
-    user_id = authorization.split(" ")[1] 
+    
+    user_token = authorization.split(" ")[1]
+    user_id = verify_user_token(user_token)
+    
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if not user_data:
         raise HTTPException(status_code=404, detail="User setting not found")
@@ -54,7 +59,9 @@ def update_user_setting(
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=400, detail="Invalid Authorization header")
 
-    user_id = authorization.split(" ")[1] 
+    user_token = authorization.split(" ")[1]
+    user_id = verify_user_token(user_token)
+
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if user_data:
         user_data.line = user_request.line
@@ -77,7 +84,9 @@ def delete_user_setting(
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=400, detail="Invalid Authorization header")
 
-    user_id = authorization.split(" ")[1] 
+    user_token = authorization.split(" ")[1]
+    user_id = verify_user_token(user_token)
+
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if not user_data:
         raise HTTPException(status_code=404, detail="User setting not found")
