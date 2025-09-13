@@ -10,9 +10,12 @@ router = APIRouter()
 @router.get("/user/status")
 def get_user_status(
     db: Session = Depends(get_db),
-    user_token: str = Header(..., alias="User-Token")
+    authorization: str = Header(..., alias="Authorization")
 ):
-    user_id = user_token
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=400, detail="Invalid Authorization header")
+    
+    user_id = authorization.split(" ")[1] 
     exists = db.query(UserSetting).filter(UserSetting.user_id == user_id).first() is not None
     return {
         "user_id": user_id,
@@ -45,9 +48,13 @@ def get_user_setting(
 def update_user_setting(
     user_request: UserSettingBase,
     db: Session = Depends(get_db),
-    user_token: str = Header(..., alias="User-Token"),
+    authorization: str = Header(..., alias="Authorization")
 ) -> dict:
-    user_id = user_token
+    
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=400, detail="Invalid Authorization header")
+
+    user_id = authorization.split(" ")[1] 
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if user_data:
         user_data.line = user_request.line
@@ -64,9 +71,13 @@ def update_user_setting(
 @router.delete("/setting")
 def delete_user_setting(
     db: Session = Depends(get_db),
-    user_token: str = Header(..., alias="User-Token")
+    authorization: str = Header(..., alias="Authorization")
 ) -> dict:
-    user_id = user_token
+    
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=400, detail="Invalid Authorization header")
+
+    user_id = authorization.split(" ")[1] 
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if not user_data:
         raise HTTPException(status_code=404, detail="User setting not found")
