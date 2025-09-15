@@ -19,8 +19,8 @@ def get_user_status(
     user_id = verify_user_token(user_token)
     exists = db.query(UserSetting).filter(UserSetting.user_id == user_id).first() is not None
     return {
-        "user_id": user_id,
-        "is_registered": exists
+        "userId": user_id,
+        "isRegistered": exists
     }
 
 # 通知設定を取得する
@@ -41,7 +41,7 @@ def get_user_setting(
         raise HTTPException(status_code=404, detail="User setting not found")
 
     return {
-        "user_id": user_data.user_id,
+        "userId": user_data.user_id,
         "line": user_data.line,
         "time": user_data.time
     }
