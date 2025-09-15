@@ -15,14 +15,12 @@ def get_user_status(
 ):
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=400, detail="Invalid Authorization header")
-    
     user_token = authorization.split(" ")[1]
     user_id = verify_user_token(user_token)
-    
     exists = db.query(UserSetting).filter(UserSetting.user_id == user_id).first() is not None
     return {
         "user_id": user_id,
-        "isRegistered": exists
+        "is_registered": exists
     }
 
 # 通知設定を取得する
