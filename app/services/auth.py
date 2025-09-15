@@ -1,22 +1,18 @@
 from fastapi import HTTPException
 import httpx
 import os
-from app.const import LINE_VERIFY_URL
+from app.const import LINE_PROFILE_URL
 
-# user_tokenを検証し、user_idを取得する
-def verify_user_token(user_token: str) -> str:
-    payload = {
-        "id_token": user_token,
-        "client_id": os.getenv("LINE_CLIENT_ID")
+# access_tokenを検証し、user_idを取得する
+def verify_access_token(access_token: str) -> dict:
+    headers = {
+        "Authorization": f"Bearer {access_token}"
     }
-    res = httpx.post(LINE_VERIFY_URL, data=payload)
-    print("DEBUG LINE verify response:", res.status_code, res.text, user_token)
-    
+    res = httpx.get(LINE_PROFILE_URL, headers=headers)
+
     if res.status_code != 200:
-        raise HTTPException(status_code=401, detail="Invalid ID token")
+        raise HTTPException(status_code=401, detail=f"Failed to fetch user info: {res.text}")
 
     data = res.json()
-    user_id = data.get("sub")
-    if not user_id:
-        raise HTTPException(status_code=401, detail="User ID not found in token")
-    return user_id
+    return data
+

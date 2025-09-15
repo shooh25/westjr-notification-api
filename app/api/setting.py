@@ -3,7 +3,7 @@ from app.models.models import UserSettingBase, UserSetting
 from app.models.db import get_db
 from sqlalchemy.orm import Session
 from app.services.notification import schedule_notification
-from app.services.auth import verify_user_token
+from app.services.auth import verify_access_token
 
 router = APIRouter()
 
@@ -15,13 +15,20 @@ def get_user_status(
 ):
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=400, detail="Invalid Authorization header")
-    user_token = authorization.split(" ")[1]
-    user_id = verify_user_token(user_token)
+
+    access_token = authorization.split(" ")[1]
+    user_info = verify_access_token(access_token)
+    user_id = user_info.get("userId")
+    
+    if not user_id:
+        raise HTTPException(status_code=401, detail="User ID not found")
+
     exists = db.query(UserSetting).filter(UserSetting.user_id == user_id).first() is not None
     return {
         "userId": user_id,
         "isRegistered": exists
     }
+
 
 # 通知設定を取得する
 @router.get("/setting")
@@ -33,9 +40,13 @@ def get_user_setting(
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=400, detail="Invalid Authorization header")
     
-    user_token = authorization.split(" ")[1]
-    user_id = verify_user_token(user_token)
+    access_token = authorization.split(" ")[1]
+    user_info = verify_access_token(access_token)
+    user_id = user_info.get("userId")
     
+    if not user_id:
+        raise HTTPException(status_code=401, detail="User ID not found")
+
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if not user_data:
         raise HTTPException(status_code=404, detail="User setting not found")
@@ -57,8 +68,9 @@ def update_user_setting(
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=400, detail="Invalid Authorization header")
 
-    user_token = authorization.split(" ")[1]
-    user_id = verify_user_token(user_token)
+    access_token = authorization.split(" ")[1]
+    user_info = verify_access_token(access_token)
+    user_id = user_info.get("userId")
 
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if user_data:
@@ -82,9 +94,10 @@ def delete_user_setting(
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=400, detail="Invalid Authorization header")
 
-    user_token = authorization.split(" ")[1]
-    user_id = verify_user_token(user_token)
-
+    access_token = authorization.split(" ")[1]
+    user_info = verify_access_token(access_token)
+    user_id = user_info.get("userId")
+    
     user_data = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
     if not user_data:
         raise HTTPException(status_code=404, detail="User setting not found")

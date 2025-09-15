@@ -85,6 +85,6 @@ TARGET_TYPES: set[str] = {"10", "63", "08"}  # 普通, 快速, う快速
 
 TARGET_DIRECTIONS: set[int] = {0, 1}
 
-LINE_VERIFY_URL = "https://api.line.me/oauth2/v2.1/verify"
+LINE_PROFILE_URL = "https://api.line.me/v2/profile"
 
 LINE_API_PUSH_URL = "https://api.line.me/v2/bot/message/push"
