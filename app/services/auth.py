@@ -10,6 +10,8 @@ def verify_user_token(user_token: str) -> str:
         "client_id": os.getenv("LINE_CLIENT_ID")
     }
     res = httpx.post(LINE_VERIFY_URL, data=payload)
+    print("DEBUG LINE verify response:", res.status_code, res.text)
+    
     if res.status_code != 200:
         raise HTTPException(status_code=401, detail="Invalid ID token")
 
