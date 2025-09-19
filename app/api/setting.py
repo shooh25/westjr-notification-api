@@ -54,7 +54,8 @@ def get_user_setting(
     return {
         "userId": user_data.user_id,
         "line": user_data.line,
-        "time": user_data.time
+        "time": user_data.time,
+        "direction": user_data.direction
     }
 
 # 通知設定を更新する
@@ -76,8 +77,14 @@ def update_user_setting(
     if user_data:
         user_data.line = user_request.line
         user_data.time = user_request.time
+        user_data.direction = user_request.direction
     else:
-        user_data = UserSetting(user_id=user_id, line=user_request.line, time=user_request.time)
+        user_data = UserSetting(
+            user_id=user_id,
+            line=user_request.line,
+            time=user_request.time,
+            direction=user_request.direction
+        )
         db.add(user_data)
     db.commit()
     

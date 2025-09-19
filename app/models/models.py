@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Integer
 from app.models.db import Base
 from pydantic import BaseModel
 from typing import Union, Optional, List
@@ -9,10 +9,12 @@ class UserSetting(Base):
     user_id = Column(String, primary_key=True, index=True)
     line = Column(String)
     time = Column(String)
+    direction = Column(Integer)
 
 class UserSettingBase(BaseModel):
     line: str
     time: str
+    direction: int
     class Config:
       orm_mode = True
 
