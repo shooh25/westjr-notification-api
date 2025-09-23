@@ -89,7 +89,7 @@ def update_user_setting(
     db.commit()
     
     schedule_notification(user_id, user_request.line, user_request.time)
-    return {"message": "User setting updated successfully", "user_id": user_id}
+    return {"message": "User setting updated successfully", "userId": user_id}
 
 # 通知設定を削除する
 @router.delete("/setting")
@@ -111,4 +111,4 @@ def delete_user_setting(
     
     db.delete(user_data)
     db.commit()
-    return {"message": "User setting deleted successfully", "user_id": user_id}
+    return {"message": "User setting deleted successfully", "userId": user_id}
