@@ -88,7 +88,7 @@ def update_user_setting(
         db.add(user_data)
     db.commit()
     
-    schedule_notification(user_id, user_request.line, user_request.time)
+    schedule_notification(user_id, user_request.line, user_request.time, user_request.direction)
     return {"message": "User setting updated successfully", "userId": user_id}
 
 # 通知設定を削除する
