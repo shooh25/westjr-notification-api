@@ -15,8 +15,8 @@ headers = {
 scheduler = BackgroundScheduler(timezone="Asia/Tokyo")
 
 # 遅延情報を通知する
-def send_notification(user_id: str, line: str):
-    messages = get_attention_messages(line, 1)
+def send_notification(user_id: str, line: str, direction: int):
+    messages = get_attention_messages(line, direction)
     response_text = "\n".join(messages)
     print(response_text, flush=True)    
     payload = {
@@ -37,23 +37,25 @@ def send_notification(user_id: str, line: str):
         )
 
 # ユーザーごとに通知スケジュールを設定する
-def schedule_notification(user_id: str, line: str, time: str):
+def schedule_notification(user_id: str, line: str, time: str, direction: int):
     hour, minute = map(int, time.split(":"))
-    # scheduler.add_job(
-	# 	func=send_notification,
-	# 	trigger="cron",
-	# 	hour=hour,
-	# 	minute=minute,
-	# 	args=[user_id, line],
-	# 	id=user_id,
-	# 	replace_existing=True,
-	# )
+    scheduler.add_job(
+		func=send_notification,
+		# trigger="cron",
+		# hour=hour,
+		# minute=minute,
+        trigger="interval",
+        seconds=120,
+		args=[user_id, line, direction],
+		id=user_id,
+		replace_existing=True,
+	)
     
 # スケジューラーを起動する
 def start_scheduler():
     db = next(get_db())
     users = db.query(UserSetting).all()
     for user in users:
-        schedule_notification(user.user_id, user.line, user.time)
+        schedule_notification(user.user_id, user.line, user.time, user.direction)
     scheduler.start()
 
