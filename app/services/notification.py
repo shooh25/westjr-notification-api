@@ -45,7 +45,7 @@ def schedule_notification(user_id: str, line: str, time: str, direction: int):
 		# hour=hour,
 		# minute=minute,
         trigger="interval",
-        seconds=120,
+        seconds=60,
 		args=[user_id, line, direction],
 		id=user_id,
 		replace_existing=True,
