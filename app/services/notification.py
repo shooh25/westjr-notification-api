@@ -38,6 +38,7 @@ def send_notification(user_id: str, line: str, direction: int):
 
 # ユーザーごとに通知スケジュールを設定する
 def schedule_notification(user_id: str, line: str, time: str, direction: int):
+    print("scheduling", user_id, line, time, direction, flush=True)
     hour, minute = map(int, time.split(":"))
     scheduler.add_job(
 		func=send_notification,
