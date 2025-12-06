@@ -1,5 +1,5 @@
-import get_all_user_settings
 from datetime import datetime
+from app.services.user_settings import get_all_user_settings
 from app.services.notification import send_notification
 
 async def main():
