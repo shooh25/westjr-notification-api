@@ -1,0 +1,14 @@
+import get_all_user_settings
+from datetime import datetime
+import app.services.notification import send_notification
+
+async def main():
+    now = datetime.now().strftime("%H:%M")
+    users = await get_all_user_settings()
+
+    for user in users:
+        if user.time == now:
+            await send_notification(user.user_id)
+
+if __name__ == "__main__":
+    asyncio.run(main())
