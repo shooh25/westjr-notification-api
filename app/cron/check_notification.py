@@ -1,15 +1,18 @@
 from datetime import datetime
-from app.services.user_settings import get_all_user_settings
 from app.services.notification import send_notification
-import asyncio
+from app.models.db import SessionLocal
 
-async def main():
+def main():
     now = datetime.now().strftime("%H:%M")
-    users = await get_all_user_settings()
+    db = SessionLocal()
+    users = db.query(UserSetting).all()
 
     for user in users:
         if user.time == now:
-            await send_notification(user.user_id)
+            send_notification(user.user_id, user.line, user.direction)
+
+    db.close()
+
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
