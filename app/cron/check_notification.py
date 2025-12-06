@@ -9,6 +9,7 @@ def main():
     users = db.query(UserSetting).all()
 
     for user in users:
+        print(user, now)
         if user.time == now:
             send_notification(user.user_id, user.line, user.direction)
 
