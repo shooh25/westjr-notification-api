@@ -1,15 +1,17 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from app.services.notification import send_notification
 from app.models.db import SessionLocal
 from app.models.models import UserSetting
 
 def main():
-    now = datetime.now().strftime("%H:%M")
+    JST = timezone(timedelta(hours=+9), 'JST')
+    now = datetime.now(JST).strftime("%H:%M")
+    
     db = SessionLocal()
     users = db.query(UserSetting).all()
 
     for user in users:
-        print(user, now)
+        print(user.user_id, user.time, now)
         if user.time == now:
             send_notification(user.user_id, user.line, user.direction)
 
