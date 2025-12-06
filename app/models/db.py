@@ -7,7 +7,6 @@ import os
 load_dotenv()
 
 path= os.getenv("DATABASE_URL")
-print(path)
 engine = create_engine(
     path
 )

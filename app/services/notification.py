@@ -18,7 +18,6 @@ scheduler = BackgroundScheduler(timezone="Asia/Tokyo")
 def send_notification(user_id: str, line: str, direction: int):
     messages = get_attention_messages(line, direction)
     response_text = "\n".join(messages)
-    print(response_text, flush=True)    
     payload = {
         "to": user_id,
         "messages": [
