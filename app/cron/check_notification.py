@@ -1,6 +1,7 @@
 from datetime import datetime
 from app.services.user_settings import get_all_user_settings
 from app.services.notification import send_notification
+import asyncio
 
 async def main():
     now = datetime.now().strftime("%H:%M")
