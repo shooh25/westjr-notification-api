@@ -7,6 +7,10 @@ from app.services.auth import verify_access_token
 
 router = APIRouter()
 
+@router.get("/sample")
+def get_message():
+    return {"message": "OK"}
+
 # 登録済みユーザーの確認
 @router.get("/user/status")
 def get_user_status(
